@@ -43,6 +43,20 @@ class LoginViewModel @Inject constructor(
     }
 
     fun resetPassword(email:String){
+        viewModelScope.launch {
+            _resetPassword.emit(States.Loading())
+        }
 
+        firebaseAuth.sendPasswordResetEmail(email)
+            .addOnSuccessListener {
+                viewModelScope.launch {
+                    _resetPassword.emit(States.OnSuccess(email))
+                }
+            }
+            .addOnFailureListener {
+                viewModelScope.launch {
+                    _resetPassword.emit(States.OnFailure(it.message.toString()))
+                }
+            }
     }
 }
