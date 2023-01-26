@@ -73,7 +73,7 @@ class RegisterViewModel @Inject constructor(
             }
     }
 
-    fun checkValidation(user: User, password: String): Boolean {
+    private fun checkValidation(user: User, password: String): Boolean {
         val emailValidation = validateEmail(user.email)
         val passwordValidation = validatePassword(password)
 
