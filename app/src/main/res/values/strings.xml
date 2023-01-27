@@ -24,4 +24,6 @@
     <string name="other">other</string>
     <string name="firstname">firstname</string>
     <string name="reset_password">Reset Password?</string>
+    <string name="best_deals">Best Deals</string>
+    <string name="best_products">Best Products</string>
 </resources>
