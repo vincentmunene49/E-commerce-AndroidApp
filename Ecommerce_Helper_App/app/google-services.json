@@ -1,0 +1,97 @@
+{
+  "project_info": {
+    "project_number": "469086288694",
+    "project_id": "ecommerceapp-b4173",
+    "storage_bucket": "ecommerceapp-b4173.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:469086288694:android:76c14f2a0044bd97275197",
+        "android_client_info": {
+          "package_name": "com.example.ecommerce_helper_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "469086288694-en7604hfvfftr5mu8p13rhfn8lj0fl4t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOOCrTZgVpeu0PPCZUC8cLMYbhvZ5W7vA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "469086288694-en7604hfvfftr5mu8p13rhfn8lj0fl4t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:469086288694:android:ce2c32352fdbde6e275197",
+        "android_client_info": {
+          "package_name": "com.example.ecommerceapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "469086288694-en7604hfvfftr5mu8p13rhfn8lj0fl4t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOOCrTZgVpeu0PPCZUC8cLMYbhvZ5W7vA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "469086288694-en7604hfvfftr5mu8p13rhfn8lj0fl4t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:469086288694:android:6d5af35707a98c57275197",
+        "android_client_info": {
+          "package_name": "com.example.productsadder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "469086288694-en7604hfvfftr5mu8p13rhfn8lj0fl4t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOOCrTZgVpeu0PPCZUC8cLMYbhvZ5W7vA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "469086288694-en7604hfvfftr5mu8p13rhfn8lj0fl4t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

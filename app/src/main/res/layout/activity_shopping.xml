@@ -33,7 +33,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:itemRippleColor="@color/g_white"
-
-
         />
 </androidx.constraintlayout.widget.ConstraintLayout>
