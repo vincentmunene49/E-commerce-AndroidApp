@@ -48,16 +48,16 @@ class HomeFragment : Fragment() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, pos ->
             when (pos) {
                 0 -> tab.text = "Main"
-                1 -> tab.text = "Chair" 
+                1 -> tab.text = "Chair"
                 2 -> tab.text = "Cupboard"
                 3 -> tab.text = "Table"
-                4-> tab.text = "Accessory"
+                4 -> tab.text = "Accessory"
                 5 -> tab.text = "Furniture"
 
             }
         }.attach()
 
-
+        binding.viewPager.isUserInputEnabled = false
     }
     //this is a test file this should genenrate a heratbea i recon
 
