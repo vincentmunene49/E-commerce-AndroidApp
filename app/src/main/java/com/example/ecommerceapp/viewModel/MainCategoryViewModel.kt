@@ -17,29 +17,31 @@ class MainCategoryViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _specialProduct = MutableStateFlow<States<List<Product>>>(States.Starting())
-    val specialProduct:StateFlow<States<List<Product>>> = _specialProduct
+    val specialProduct: StateFlow<States<List<Product>>> = _specialProduct
 
     private val _bestDeals = MutableStateFlow<States<List<Product>>>(States.Starting())
-    val bestDeals:StateFlow<States<List<Product>>> = _bestDeals
+    val bestDeals: StateFlow<States<List<Product>>> = _bestDeals
 
     private val _bestProducts = MutableStateFlow<States<List<Product>>>(States.Starting())
-    val bestProducts:StateFlow<States<List<Product>>> = _bestProducts
+    val bestProducts: StateFlow<States<List<Product>>> = _bestProducts
 
-init {
-    fetchFromFireStore()
-    fetchBestDeals()
-    fetchBestProducts()
+    private val pagingInfo = PagingInfo()
 
-}
+    init {
+        fetchFromFireStore()
+        fetchBestDeals()
+        fetchBestProducts()
+
+    }
     //fetch product from firestore
 
-    fun fetchFromFireStore(){
+    fun fetchFromFireStore() {
         viewModelScope.launch {
             _specialProduct.emit(States.Loading())
         }
         //fetch special procucts
         firestore.collection("Product")
-            .whereEqualTo("category","special products")
+            .whereEqualTo("category", "special products")
             .get()
             .addOnSuccessListener {
                 val specialProductList = it.toObjects(Product::class.java)
@@ -56,13 +58,13 @@ init {
 
     }
 
-    fun fetchBestDeals(){
+    fun fetchBestDeals() {
         viewModelScope.launch {
             _bestDeals.emit(States.Loading())
         }
         //fetch bestDeals
         firestore.collection("Product")
-            .whereEqualTo("category","best deals")
+            .whereEqualTo("category", "best deals")
             .get()
             .addOnSuccessListener {
                 val best_deals_list = it.toObjects(Product::class.java)
@@ -70,29 +72,41 @@ init {
                     _bestDeals.emit(States.OnSuccess(best_deals_list))
                 }
             }.addOnFailureListener {
-                viewModelScope.launch{
+                viewModelScope.launch {
                     _bestDeals.emit(States.OnFailure(it.message.toString()))
                 }
             }
     }
 
-    fun fetchBestProducts(){
-        viewModelScope.launch {
-            _bestProducts.emit(States.Loading())
-        }
-
-        //fetch bestProducts
-        firestore.collection("Product")
-            .get()
-            .addOnSuccessListener {
-                val bestProductsList = it.toObjects(Product::class.java)
-                viewModelScope.launch {
-                    _bestProducts.emit(States.OnSuccess(bestProductsList))
-                }
-            }.addOnFailureListener {
-                viewModelScope.launch{
-                    _bestProducts.emit(States.OnFailure(it.message.toString()))
-                }
+    fun fetchBestProducts() {
+        if (!pagingInfo.isPagingEnd) {
+            viewModelScope.launch {
+                _bestProducts.emit(States.Loading())
             }
+
+            //fetch bestProducts
+            firestore.collection("Product").limit(pagingInfo.bestProductsPage * 10)
+                .get()
+                .addOnSuccessListener {
+                    val bestProductsList = it.toObjects(Product::class.java)
+                    pagingInfo.isPagingEnd = bestProductsList == pagingInfo.oldBestProduct
+                    pagingInfo.oldBestProduct = bestProductsList
+                    viewModelScope.launch {
+                        _bestProducts.emit(States.OnSuccess(bestProductsList))
+                    }
+                    pagingInfo.bestProductsPage++
+                }.addOnFailureListener {
+                    viewModelScope.launch {
+                        _bestProducts.emit(States.OnFailure(it.message.toString()))
+                    }
+                }
+        }
     }
 }
+
+internal data class PagingInfo(
+    var bestProductsPage: Long = 1,
+    var oldBestProduct: List<Product> = emptyList(),
+    var isPagingEnd: Boolean = false
+
+)
