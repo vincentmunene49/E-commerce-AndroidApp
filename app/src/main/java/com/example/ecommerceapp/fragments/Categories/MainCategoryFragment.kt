@@ -10,23 +10,30 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.ecommerceapp.Activities.ShoppingActivity
 import com.example.ecommerceapp.R
 import com.example.ecommerceapp.adapter.BestDealsAdapter
 import com.example.ecommerceapp.adapter.BestProductsAdapter
 import com.example.ecommerceapp.adapter.SpecialProductAdapter
+import com.example.ecommerceapp.data.Product
 import com.example.ecommerceapp.databinding.FragmentMainCategoryBinding
+import com.example.ecommerceapp.util.hideBottomNav
+import com.example.ecommerceapp.util.showBottomNav
 import com.example.ecommerceapp.viewModel.MainCategoryViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import util.States
+
 @AndroidEntryPoint
 class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
     private var _binding: FragmentMainCategoryBinding? = null
     val binding get() = _binding!!
     private lateinit var specialProductAdapter: SpecialProductAdapter
-    private lateinit var bestDealsAdapter:BestDealsAdapter
+    private lateinit var bestDealsAdapter: BestDealsAdapter
     private lateinit var bestProductAdapter: BestProductsAdapter
     private val mainCategoryViewModel by viewModels<MainCategoryViewModel>()
     override fun onCreateView(
@@ -34,8 +41,10 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        hideBottomNav()
         _binding = FragmentMainCategoryBinding.inflate(layoutInflater)
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,6 +53,31 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
         setUpRecylerView()
         setUpBestDealsRv()
         setUpBestProductsRv()
+
+        //navigate to product details
+        specialProductAdapter.onItemClickedListener = {
+            val bundle = Bundle().apply {
+                putParcelable("product", it)
+            }
+
+            findNavController().navigate(R.id.productDetailsFragment2, bundle)
+        }
+        //navigate to product details
+        bestProductAdapter.onItemClickedListener = {
+            val bundle = Bundle().apply {
+                putParcelable("product", it)
+            }
+
+            findNavController().navigate(R.id.productDetailsFragment2, bundle)
+        }
+        //navigate to product details
+        bestDealsAdapter.onItemClickedListener = {
+            val bundle = Bundle().apply {
+                putParcelable("product", it)
+            }
+
+            findNavController().navigate(R.id.productDetailsFragment2, bundle)
+        }
 
 
         lifecycleScope.launchWhenStarted {
@@ -67,27 +101,28 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
                 }
             }
         }
-            //best deals
-            lifecycleScope.launchWhenStarted {
-                mainCategoryViewModel.bestDeals.collectLatest {
-                    when (it) {
-                        is States.Loading -> {
-                            showLoaidng()
-                        }
-                        is States.OnSuccess -> {
-                            bestDealsAdapter.differ.submitList(it.data)
-
-                            hideLoading()
-                        }
-                        is States.OnFailure ->{
-                            hideLoading()
-                            Log.e("MainCategory",it.message.toString())
-                            Toast.makeText(requireContext(),it.message,Toast.LENGTH_LONG).show()
-                        }else -> Unit
-
+        //best deals
+        lifecycleScope.launchWhenStarted {
+            mainCategoryViewModel.bestDeals.collectLatest {
+                when (it) {
+                    is States.Loading -> {
+                        showLoaidng()
                     }
+                    is States.OnSuccess -> {
+                        bestDealsAdapter.differ.submitList(it.data)
+
+                        hideLoading()
+                    }
+                    is States.OnFailure -> {
+                        hideLoading()
+                        Log.e("MainCategory", it.message.toString())
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    }
+                    else -> Unit
+
                 }
             }
+        }
         //best products
         lifecycleScope.launchWhenStarted {
             mainCategoryViewModel.bestProducts.collectLatest {
@@ -100,19 +135,20 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
 
                         hideLoading()
                     }
-                    is States.OnFailure ->{
+                    is States.OnFailure -> {
                         hideLoading()
-                        Log.e("MainCategory",it.message.toString())
-                        Toast.makeText(requireContext(),it.message,Toast.LENGTH_LONG).show()
-                    }else -> Unit
+                        Log.e("MainCategory", it.message.toString())
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                    }
+                    else -> Unit
 
                 }
             }
         }
 
 //listen to our nested scrollview
-        binding.nestedScrollMainCategory.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener{v,_,scrollY,_,_ ->
-            if(v.getChildAt(0).bottom <= v.height + scrollY){
+        binding.nestedScrollMainCategory.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+            if (v.getChildAt(0).bottom <= v.height + scrollY) {
                 mainCategoryViewModel.fetchBestProducts()
             }
         })
@@ -122,7 +158,8 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
     private fun setUpBestProductsRv() {
         bestProductAdapter = BestProductsAdapter()
         binding.bestProducts.apply {
-           layoutManager  =GridLayoutManager(requireContext(),2,GridLayoutManager.VERTICAL,false)
+            layoutManager =
+                GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
             adapter = bestProductAdapter
         }
     }
@@ -146,11 +183,13 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
 
 
     }
-    private fun setUpBestDealsRv(){
+
+    private fun setUpBestDealsRv() {
         //bestDeals
         bestDealsAdapter = BestDealsAdapter()
         binding.bestDeals.apply {
-            layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = bestDealsAdapter
         }
     }
@@ -158,5 +197,10 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        showBottomNav()
     }
 }

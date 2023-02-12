@@ -18,6 +18,7 @@ class CategoryViewModel(
     val offerProducts: StateFlow<States<List<Product>>> = _offerProducts
     private var _bestProducts = MutableStateFlow<States<List<Product>>>(States.Starting())
     val bestProducts: StateFlow<States<List<Product>>> = _bestProducts
+    private val pagingInfo = PagingInfo()
 
     init {
         getBestProducts()
@@ -48,23 +49,37 @@ class CategoryViewModel(
     }
 
     fun getBestProducts() {
-        viewModelScope.launch {
-            _bestProducts.emit(States.Loading())
-        }
-        firestore.collection("Product").whereEqualTo("category", category.category)
-            .whereEqualTo("offerPercentage", null).get().addOnSuccessListener {
-
-                val productList = it.toObjects(Product::class.java)
-                viewModelScope.launch {
-                    _bestProducts.emit(States.OnSuccess(productList))
-                }
+        if (!pagingInfo.isPagingEnd) {
 
 
-            }.addOnFailureListener {
-                viewModelScope.launch {
-                    _bestProducts.emit(States.OnFailure(it.message.toString()))
-                }
-
+            viewModelScope.launch {
+                _bestProducts.emit(States.Loading())
             }
+            firestore.collection("Product").whereEqualTo("category", category.category)
+                .whereEqualTo("offerPercentage", null).limit(pagingInfo.bestProductsPage * 10)
+                .get().addOnSuccessListener {
+
+                    val productList = it.toObjects(Product::class.java)
+                    pagingInfo.isPagingEnd = productList == pagingInfo.oldBestProduct
+                    pagingInfo.oldBestProduct = productList
+                    viewModelScope.launch {
+                        _bestProducts.emit(States.OnSuccess(productList))
+                    }
+                    pagingInfo.bestProductsPage++
+
+
+                }.addOnFailureListener {
+                    viewModelScope.launch {
+                        _bestProducts.emit(States.OnFailure(it.message.toString()))
+                    }
+
+                }
+        }
     }
+    internal data class PagingInfo(
+        var bestProductsPage: Long = 1,
+        var oldBestProduct: List<Product> = emptyList(),
+        var isPagingEnd: Boolean = false
+
+    )
 }

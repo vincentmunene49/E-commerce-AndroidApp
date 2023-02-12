@@ -26,6 +26,7 @@ class ChairFragment : BaseCategory() {
         super.onViewCreated(view, savedInstanceState)
 
 
+
         lifecycleScope.launchWhenStarted {
             viewModel.offerProducts.collectLatest {
                 when (it) {
@@ -70,5 +71,10 @@ class ChairFragment : BaseCategory() {
                 }
             }
         }
+
+    }
+
+    override fun paging() {
+        viewModel.getBestProducts()
     }
 }

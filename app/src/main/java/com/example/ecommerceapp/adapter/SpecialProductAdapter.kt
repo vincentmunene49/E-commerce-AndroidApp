@@ -12,7 +12,7 @@ import com.example.ecommerceapp.R
 import com.example.ecommerceapp.data.Product
 import com.example.ecommerceapp.databinding.SpecialRvItemBinding
 
-class SpecialProductAdapter :
+class SpecialProductAdapter:
     RecyclerView.Adapter<SpecialProductAdapter.SpecialProductsViewHolder>() {
 
     inner class SpecialProductsViewHolder(private val binding:SpecialRvItemBinding) :
@@ -48,9 +48,14 @@ class SpecialProductAdapter :
     override fun onBindViewHolder(holder: SpecialProductsViewHolder, position: Int) {
         val product = differ.currentList[position]
         holder.bind(product)
+        holder.itemView.setOnClickListener {
+            onItemClickedListener?.invoke(product)
+        }
     }
 
     override fun getItemCount(): Int {
         return differ.currentList.size
     }
+
+    var onItemClickedListener :((Product)->Unit)?=null
 }
